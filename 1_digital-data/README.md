@@ -2,7 +2,7 @@
 
 **Lecture:** Introduction to Image Processing · Tue 22.09 · **The question:** *Can we turn whatever the camera gives us into one consistent format?*
 
-<p align="center"><img src="pipeline.svg" alt="The Drip Detector CI-pipeline with Digital Data highlighted" width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check CI-pipeline with Digital Data highlighted" width="760"></p>
 
 ## Why?
 

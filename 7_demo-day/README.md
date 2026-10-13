@@ -2,7 +2,7 @@
 
 **Lecture:** Course Summary · Tue 13.10 · **The question:** *What do we show the investors (and the hospital)?*
 
-<p align="center"><img src="pipeline.svg" alt="The Drip Detector CI-pipeline with Demo Day highlighted" width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check CI-pipeline with Demo Day highlighted" width="760"></p>
 
 ## Why?
 

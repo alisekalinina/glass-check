@@ -2,7 +2,7 @@
 
 **Lecture:** Image Preprocessing Methods · Thu 24.09 · **The question:** *Our clip-on camera is cheap. Can we trust its pixels?*
 
-<p align="center"><img src="pipeline.svg" alt="The Drip Detector CI-pipeline with Cleaning highlighted" width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check CI-pipeline with Cleaning highlighted" width="760"></p>
 
 ## Why?
 

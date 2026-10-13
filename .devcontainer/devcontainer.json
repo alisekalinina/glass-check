@@ -1,5 +1,5 @@
 {
-  "name": "Drip Detector — CV pipeline",
+  "name": "Glass Check — CV pipeline",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
   "postCreateCommand": "pip install -r requirements.txt && python run_pipeline.py --to 1",
   "customizations": {

@@ -2,7 +2,7 @@
 
 **Lecture:** Image Classification with Random Forests · Tue 06.10 · **The question:** *Is the infusion running, stopped, or about to run dry?*
 
-<p align="center"><img src="pipeline.svg" alt="The Drip Detector CI-pipeline with Classifying · Random Forest highlighted" width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check CI-pipeline with Classifying · Random Forest highlighted" width="760"></p>
 
 ## Why?
 

@@ -2,7 +2,7 @@
 
 **Lecture:** Image Classification with Neural Networks · Thu 08.10 · **The question:** *Can a network learn its own features, straight from the pixels?*
 
-<p align="center"><img src="pipeline.svg" alt="The Drip Detector CI-pipeline with Classifying · Neural Network highlighted" width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check CI-pipeline with Classifying · Neural Network highlighted" width="760"></p>
 
 ## Why?
 

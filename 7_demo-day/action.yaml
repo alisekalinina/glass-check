@@ -21,10 +21,10 @@ inputs:
   # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
   project_name:
     description: "Your startup's name, the title of the report"
-    default: "Drip Detector"
+    default: "Glass Check"
   pitch:
     description: "One sentence an investor remembers"
-    default: "A clip-on camera that tells the nurse when an IV drip stops or runs dry."
+    default: "A camera that tells if a glass is empty, holds water or coffee."
   # ━━━━━━━━━━━━━━━━━━━━━━━ end of this stage's values ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 runs:

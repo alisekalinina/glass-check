@@ -2,7 +2,7 @@
 
 **Lecture:** Image Preprocessing Methods · Thu 24.09 · **The question:** *Night shift on the ward: will we still see anything in dim light?*
 
-<p align="center"><img src="pipeline.svg" alt="The Drip Detector CI-pipeline with Improving highlighted" width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check CI-pipeline with Improving highlighted" width="760"></p>
 
 ## Why?
 

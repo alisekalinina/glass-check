@@ -2,7 +2,7 @@
 
 **Lecture:** Image Segmentation · Tue 29.09 · **The question:** *Which pixels belong to the drip chamber, and which are just background?*
 
-<p align="center"><img src="pipeline.svg" alt="The Drip Detector CI-pipeline with Segmenting highlighted" width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check CI-pipeline with Segmenting highlighted" width="760"></p>
 
 ## Why?
 

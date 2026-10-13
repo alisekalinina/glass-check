@@ -2,7 +2,7 @@
 
 **Lecture:** Feature Extraction and Data Preparation · Thu 01.10 · **The question:** *How do we describe a frame with numbers a model can learn from?*
 
-<p align="center"><img src="pipeline.svg" alt="The Drip Detector CI-pipeline with Extracting highlighted" width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check CI-pipeline with Extracting highlighted" width="760"></p>
 
 ## Why?
 

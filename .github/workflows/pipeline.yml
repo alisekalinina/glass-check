@@ -1,0 +1,166 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  🚀 DRIP DETECTOR — CI-PIPELINE
+#
+#      📸 Step 0 · Image for analyzing  Actions → Run workflow → paste the URL of a photo
+#       │
+#      Pre-Processing              Processing
+#      1 Digital Data  ─┐          4 Segmenting  ─┐
+#      2 Cleaning      ─┼────────▶ 5 Extracting  ─┼──▶ 6 🌳 Random forest ─┐
+#      3 Improving     ─┘                         └──▶ 6 🧠 Neural network ─┴─▶ 7 Demo Day 💻 Inference
+#
+#  Every stage is a folder, imported below with  - uses: ./<n>_<stage>
+#  In it: README.md (why, and what to try), action.yaml (the values) and <stage>.py (the code this job runs).
+#
+#  Every stage follows the same plan (unlike the Underpants Gnomes, ours has a Step 2):
+#    Step 0  take a photo, put it online, paste its URL in Actions → Run workflow → it runs
+#            through every stage, and Demo Day's report (GitHub Pages) shows what happened to it
+#    Step 1  take the input from the previous stage (an artifact)
+#    Step 2  change one of a stage's values, run it, compare the report and the picture
+#    Step 3  analyse the results; the gates decide if we pass on to the next stage
+#
+#  Runs on: pull requests (not docs-only ones), pushes to images_for_analyzing/, and the Run workflow button
+#  (with or without a photo URL). A web page can also send an image for analyzing: repository_dispatch type "snap".
+#  Locally: python run_pipeline.py --snap photo.jpg
+# ══════════════════════════════════════════════════════════════════════════════
+name: 🚀 CI-Pipeline
+
+on:
+  push:
+    paths:
+      - "images_for_analyzing/**"
+      - "!images_for_analyzing/**.md"
+  pull_request:
+    paths-ignore: ["**.md", "**.svg", ".devcontainer/**", "docs/**"]
+  workflow_dispatch:
+    inputs:
+      snap_url:
+        description: "📸 URL of an image to send through every stage (empty: the one in images_for_analyzing/)"
+        required: false
+  repository_dispatch:
+    types: [snap]
+
+env:
+  SNAP_URL: ${{ inputs.snap_url || github.event.client_payload.snap_url }}
+  SNAP_ID: ${{ github.event.client_payload.snap_id }}
+  SNAP_LABEL: ${{ github.event.client_payload.snap_label }}
+  CV_WEBHOOK_URL: ${{ github.event.client_payload.webhook_url || vars.CV_WEBHOOK_URL }}
+  CV_WEBHOOK_SECRET: ${{ secrets.CV_WEBHOOK_SECRET }}
+
+concurrency:
+  # Code runs on the same branch cancel each other; every photo gets its own run.
+  group: pipeline-${{ github.ref }}-${{ (inputs.snap_url || github.event.client_payload.snap_url) && github.run_id || 'code' }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Pre-Processing ──────────────────────────────────────────────────── 1_digital-data, 2_cleaning, 3_improving
+  digital-data:
+    name: 1 · Digital Data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./1_digital-data
+
+  cleaning:
+    name: 2 · Cleaning
+    needs: digital-data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./2_cleaning
+
+  improving:
+    name: 3 · Improving
+    needs: cleaning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./3_improving
+
+  # ── Processing ──────────────────────────────── 4_segmenting, 5_extracting, 6_random-forest, 6_neural-network
+  segmenting:
+    name: 4 · Segmenting
+    needs: improving
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./4_segmenting
+
+  extracting:
+    name: 5 · Extracting
+    needs: segmenting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./5_extracting
+
+  random-forest:
+    name: 6 · Classifying — Random forest
+    needs: extracting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./6_random-forest
+
+  neural-network:
+    name: 6 · Classifying — Neural network
+    needs: extracting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./6_neural-network
+
+  # ── Inference & Demo Day ──────────────────────────────────────────────────────────────────── 7_demo-day
+  demo-day:
+    name: 7 · Demo Day
+    needs: [digital-data, cleaning, improving, segmenting, extracting, random-forest, neural-network]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./7_demo-day
+
+  # Optional: publish the Demo Day report as a website.
+  # Switch on: Settings → Pages → Source: GitHub Actions,
+  # then Settings → Secrets and variables → Actions → Variables → ENABLE_PAGES = true
+  # 🌐 Publish the Demo Day report as a website, automatically once
+  # Settings → Pages → Source is set to "GitHub Actions" (or force it with the variable ENABLE_PAGES = true).
+  pages-check:
+    name: 🌐 Is GitHub Pages on?
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: read
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ vars.ENABLE_PAGES }}
+        run: |
+          TYPE=$(gh api "repos/${{ github.repository }}/pages" --jq .build_type 2>/dev/null || true)
+          echo "Pages build type: ${TYPE:-not enabled}"
+          if [ "$TYPE" = "workflow" ] || [ "$FORCE" = "true" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "🌐 Want the Demo Day report as a website? Settings → Pages → Source: **GitHub Actions**" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  publish:
+    name: 🌐 Publish Demo Day page
+    needs: [demo-day, pages-check]
+    if: ${{ !cancelled() && needs.demo-day.result == 'success' && needs.pages-check.outputs.enabled == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -24,7 +24,7 @@ inputs:
   # │ chambers; "folder" reads your own images from images_for_training/<class>/.
   source:
     description: "synthetic | folder"
-    default: "synthetic"
+    default: "folder"
   folder:
     description: "Folder with one sub-folder per class (used when source is folder)"
     default: "images_for_training"

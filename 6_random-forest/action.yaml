@@ -40,7 +40,7 @@ inputs:
     default: "null"
   min_samples_leaf:
     description: "Smallest group of frames a leaf may hold"
-    default: "1"
+    default: "2"
   class_weight:
     description: "null | balanced — balanced weighs rare classes more"
     default: "null"

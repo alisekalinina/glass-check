@@ -100,7 +100,7 @@ inputs:
 
   pass_on:
     description: "masked | mask | crop | original — what Extracting receives"
-    default: "masked"
+    default: "original"
 
   # ━━━━━━━━━━━━━━━━━━━━━━━ end of this stage's values ━━━━━━━━━━━━━━━━━━━━━━━━━━
 

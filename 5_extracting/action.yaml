@@ -20,7 +20,7 @@ inputs:
   # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
   features:
     description: "Any of: hog | lbp | histogram | pixels"
-    default: "[hog, lbp]"
+    default: "[hog, lbp, histogram]"
 
   # │ hog — Histogram of Oriented Gradients
   # │ 🏛️ 2005 · Navneet Dalal & Bill Triggs (INRIA), to find pedestrians.

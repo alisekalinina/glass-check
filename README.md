@@ -1,15 +1,71 @@
-# 🚀 Your Computer Vision Company  — a computer-vision startup in a CI-pipeline
+# 🥛 Glass Check — a computer-vision startup in a CI-pipeline
 
 **LA0666 Computer Vision · RTU Liepāja · Fall 2026**
 
-A template for building a computer-vision product the way a startup would: every lecture adds one stage to the product's pipeline, every push shows whether the product got better or worse, and theory and practice live in one folder per stage.
+> A camera that tells if a glass is empty, holds water or coffee.
 
-**It ships with a worked example, the Drip Detector:** a clip-on camera for an IV drip chamber that tells the nurse when an infusion **stops** or is about to **run dry**. Every stage explains itself with it, and a synthetic dataset of drip chambers makes the whole pipeline run on day one. Learn with the example; [make it yours](#make-it-yours) when you have your own idea.
+Glass Check looks at a photo of a glass and answers one question: **empty, water or coffee?** It is built on the course template: every lecture is one stage of the pipeline, and every push shows whether the model got better or worse.
 
-<p align="center"><img src="cv_pipeline_overview_01.jpeg" alt="JF Peters defines Computer Vision as a set of Layers to get from a Natural Image to a Deterministic Answers. These Layers are the Stages in our Pipeline." width="760"></p>
+<p align="center"><img src="pipeline.svg" alt="The Glass Check pipeline: Digital Data, Cleaning, Improving, Segmenting, Extracting, Classifying, Demo Day" width="760"></p>
 
-<p align="center"><img src="cv_pipeline_overview_02.jpeg" alt="The Drip Detector CI-pipeline: Step 0 image for analyzing, Pre-Processing (Digital Data, Cleaning, Improving), Processing (Segmenting, Extracting, Classifying) and Inference" width="760"></p>
+## The data
 
+| | |
+|---|---|
+| Classes | `empty`, `water`, `coffee` |
+| Images | **135 own photos**, 45 per class, in [`images_for_training/`](images_for_training/) |
+| Camera | phone, 4032×3024, converted from HEIC to JPG |
+| Setup | one glass, one plain background, the same LED light for every class |
+| Split | 101 train / 34 test, locked in stage 1 (`test_size: 0.25`, `seed: 42`) |
+
+All classes were shot under the same light, so the model can't tell them apart by the lighting instead of by what is in the glass.
+
+## The result
+
+| Metric | Value |
+|---|---|
+| Test accuracy | **0.941** (gate ≥ 0.85 ✅) |
+| Cross-validation accuracy | 0.896 ± 0.083 |
+| Recall per class | coffee 0.91 · empty 1.00 · water 0.92 (gate ≥ 0.75 ✅) |
+| Mistakes on the test set | 2 of 34 |
+| Baseline (always guess one class) | 0.32 |
+
+## The experiments
+
+One value at a time, the rest unchanged.
+
+| # | Change | What happened |
+|---|---|---|
+| 1 | Template values, 30 photos per class | test 0.826, coffee recall 0.714 ❌ — coffee mistaken for empty |
+| 2 | `5_extracting`: `features` + `histogram` | the model started using brightness; test 0.783 (one photo of 23) |
+| 3 | `4_segmenting`: `pass_on: original` | the mask had cut the dark coffee out of the glass; cv 0.794 → **0.882**, coffee recall 0.857 |
+| 4 | `5_extracting`: `hog_pixels_per_cell: 8` | worse, test 0.696: 8 292 features for 67 photos — reverted |
+| 5 | `6_random-forest`: `min_samples_leaf: 2` | test 0.826, recall gate ✅ |
+| 6 | `6_random-forest`: `n_estimators: 500` | worse, test 0.783: one borderline photo flips — reverted |
+| 7 | **15 more photos per class (45 each)** | **test 0.941, all gates ✅** |
+
+**What we learned:** the segmentation mask, not the model, caused the first mistakes, and more photos helped more than any single value.
+
+## Final values
+
+| Stage | Value |
+|---|---|
+| `1_digital-data` | `source: "folder"` |
+| `4_segmenting` | `pass_on: "original"` |
+| `5_extracting` | `features: "[hog, lbp, histogram]"` |
+| `6_random-forest` | `min_samples_leaf: "2"` |
+
+## Try it
+
+```bash
+pip install -r requirements.txt
+python run_pipeline.py                                          # every stage, like CI
+python run_pipeline.py --snap my_glass.jpg --snap-label coffee  # your own photo
+```
+
+---
+
+*Built on the course template. Its worked example, the Drip Detector, explains every stage below.*
 ## How this repository works
 
 Every layer of the theory is a stage of our pipeline, and **every stage is a folder** with three files:
